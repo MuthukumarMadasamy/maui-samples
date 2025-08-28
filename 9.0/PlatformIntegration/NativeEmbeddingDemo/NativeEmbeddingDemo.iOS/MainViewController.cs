@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Controls.Embedding;
+using Microsoft.Maui.Platform;
 
 namespace NativeEmbeddingDemo.iOS;
 
@@ -49,10 +50,10 @@ public class MainViewController : UIViewController
         });
 
         // Create UIKit button
-        var uiButton = new UIButton(UIButtonType.System);
-        uiButton.SetTitle("UIKit button above .NET MAUI controls", UIControlState.Normal);
-        uiButton.TouchUpInside += OnUIButtonClicked;
-        stackView.AddArrangedSubview(uiButton);
+        var draggableListButton = new UIButton(UIButtonType.System);
+        draggableListButton.SetTitle("Show Draggable List", UIControlState.Normal);
+        draggableListButton.TouchUpInside += OnDraggableListButtonClicked;
+        stackView.AddArrangedSubview(draggableListButton);
 
         //// App context
         //// Ensure .NET MAUI app is built before creating .NET MAUI views
@@ -123,15 +124,14 @@ public class MainViewController : UIViewController
         }
     }
 
-    async void OnUIButtonClicked(object? sender, EventArgs e)
+    void OnDraggableListButtonClicked(object? sender, EventArgs e)
     {
-        if (_mauiView?.DotNetBot is not Image bot)
-            return;
-
-        await bot.RotateTo(360, 1000);
-        bot.Rotation = 0;
-
-        bot.HeightRequest = 90;
+        var page = new NativeEmbeddingDemo.Pages.DraggableListViewPage();
+        var handler = page.ToHandler(WindowContext);
+        if (handler?.ViewController != null && NavigationController != null)
+        {
+            NavigationController.PushViewController(handler.ViewController, true);
+        }
     }
 
     // UIStackView uses IntrinsicContentSize instead of SizeThatFits so
@@ -163,4 +163,3 @@ public class MainViewController : UIViewController
         }
     }
 }
-
